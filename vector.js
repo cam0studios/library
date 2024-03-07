@@ -32,7 +32,7 @@ VECTORS :
   Vector.rotate(v,angle,[axis])   static, rotates a vector
 */
 
-const Vector = class {
+window.Vector = class {
   constructor(x,y,z) {
     if(arguments.length>1) {
       this.type = arguments.length;
