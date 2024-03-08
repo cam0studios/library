@@ -95,9 +95,9 @@ window.Vector = class {
     if(this.type==2) {
       rot = this.copy;
     } else {
-      if(axis=="x") rot = new Vector(this.y,this.z);
-      if(axis=="y") rot = new Vector(this.x,this.z);
-      if(axis=="z") rot = new Vector(this.x,this.y);
+      if(axis=="x") rot = this.yz;
+      if(axis=="y") rot = this.xz;
+      if(axis=="z") rot = this.xy;
     }
     let a = rot.heading + angle;
     let m = rot.mag;
@@ -121,6 +121,37 @@ window.Vector = class {
   get heading() {
     if(this.type>2) console.warn("Warning: heading is only for 2D vectors"); 
     return Math.atan2(this.y,this.x);
+  }
+  get abs() {
+    if(this.type>2) return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+    else return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+  }
+  max(v) {
+    if(this.type>2) return new Vector(Math.max(this.x,v.x), Math.max(this.y,v.y), Math.max(this.z,v.z));
+    else return new Vector(Math.max(this.x,v.x), Math.max(this.y,v.y));
+  }
+  min(v) {
+    if(this.type>2) return new Vector(Math.min(this.x,v.x), Math.min(this.y,v.y), Math.min(this.z,v.z));
+    else return new Vector(Math.min(this.x,v.x), Math.min(this.y,v.y));
+  }
+  dot(v) {
+    return this.x*v.x + this.y*v.y + this.z*v.z;
+  }
+  ndot(v) {
+    if(this.type>2) console.warn("Warning: ndot is only for 2D vectors");
+    return this.x*v.x - this.y*v.y;
+  }
+  get xy() {
+    if(this.type<3) console.error("Error: xy is only for 3D vectors");
+    else return new Vector(this.x,this.y);
+  }
+  get xz() {
+    if(this.type<3) console.error("Error: xz is only for 3D vectors");
+    else return new Vector(this.x,this.z);
+  }
+  get yz() {
+    if(this.type<3) console.error("Error: yz is only for 3D vectors");
+    else return new Vector(this.y,this.z);
   }
 
   set mag(n) {
@@ -155,5 +186,8 @@ window.Vector = class {
     let v2 = v.copy;
     v2.rotate(angle,axis);
     return v2;
+  }
+  static zero() {
+    return new Vector(0,0,0);
   }
 }
