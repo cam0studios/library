@@ -39,6 +39,7 @@ window.Vector = class {
       this.x = x;
       this.y = y;
       this.z = this.type>2 ? z : 0;
+      return this;
     } else {
       console.error("Error: Vector expected 2 or 3 arguments, not "+arguments.length);
     }
@@ -53,6 +54,7 @@ window.Vector = class {
       this.y += v.y;
       this.z += this.type>2 ? v.z : 0;
     }
+    return this;
   }
   sub(v,y,z) {
     if(arguments.length>1) {
@@ -64,6 +66,7 @@ window.Vector = class {
       this.y -= v.y;
       this.z -= this.type>2 ? v.z : 0;
     }
+    return this;
   }
   div(n) {
     if (n==0) {
@@ -73,11 +76,13 @@ window.Vector = class {
       this.y /= n;
       this.z /= n;
     }
+    return this;
   }
   mult(n) {
     this.x *= n;
     this.y *= n;
     this.z *= n;
+    return this;
   }
   set(v,y,z) {
     if(arguments.length>1) {
@@ -89,6 +94,7 @@ window.Vector = class {
       this.y = v.y;
       this.z = this.type>2 ? v.z : 0;
     }
+    return this;
   }
   rotate(angle,axis) {
     let rot;
@@ -109,6 +115,7 @@ window.Vector = class {
       if(axis=="y") this.set(rot.x,this.y,rot.y);
       if(axis=="z") this.set(rot.x,rot.y,this.z);
     }
+    return this;
   }
   
   get mag() {
@@ -156,10 +163,12 @@ window.Vector = class {
 
   set mag(n) {
     this.mult(n/this.mag);
+    return this;
   }
   set heading(n) {
     if(this.type>2) console.warn("Warning: heading is only for 2D vectors");
     this.rotate(n-this.heading);
+    return this;
   }
 
   static add(v1,v2) {
@@ -187,7 +196,7 @@ window.Vector = class {
     v2.rotate(angle,axis);
     return v2;
   }
-  static zero() {
+  static get zero() {
     return new Vector(0,0,0);
   }
 }
