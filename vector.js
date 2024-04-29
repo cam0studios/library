@@ -1,40 +1,42 @@
 window.Vector = class {
-  constructor(x,y,z) {
-    if(arguments.length>1) {
-      this.type = arguments.length;
+  constructor (x,y,z) {
+    if (arguments.length>1) {
+      if (arguments.length==2) z = 0;
       this.x = x;
       this.y = y;
-      this.z = this.type>2 ? z : 0;
+      this.z = z;
       return this;
     } else {
       console.error("Error: Vector expected 2 or 3 arguments, not "+arguments.length);
     }
   }
-  add(v,y,z) {
-    if(arguments.length>1) {
+  add (v,y,z) {
+    if (arguments.length>1) {
+      if (arguments.length==2) z = 0;
       this.x += v;
       this.y += y;
-      this.z += this.type>2 ? z : 0;
+      this.z += z;
     } else {
       this.x += v.x;
       this.y += v.y;
-      this.z += this.type>2 ? v.z : 0;
+      this.z += v.z;
     }
     return this;
   }
-  sub(v,y,z) {
-    if(arguments.length>1) {
+  sub (v,y,z) {
+    if (arguments.length>1) {
+      if (arguments.length==2) z = 0;
       this.x -= v;
       this.y -= y;
-      this.z -= this.type>2 ? z : 0;
+      this.z -= z;
     } else {
       this.x -= v.x;
       this.y -= v.y;
-      this.z -= this.type>2 ? v.z : 0;
+      this.z -= v.z;
     }
     return this;
   }
-  div(n) {
+  div (n) {
     if (n==0) {
       console.error("Error: div parameter cannot be 0");
     } else {
@@ -44,28 +46,29 @@ window.Vector = class {
     }
     return this;
   }
-  mult(n) {
+  mult (n) {
     this.x *= n;
     this.y *= n;
     this.z *= n;
     return this;
   }
-  set(v,y,z) {
-    if(arguments.length>1) {
+  set (v,y,z) {
+    if (arguments.length>1) {
+      if (arguments.length==2) z = 0;
       this.x = v;
       this.y = y;
-      this.z = this.type>2 ? z : 0;
+      this.z = z;
     } else {
       this.x = v.x;
       this.y = v.y;
-      this.z = this.type>2 ? v.z : 0;
+      this.z = v.z;
     }
     return this;
   }
-  rotate(angle,axis) {
+  rotate (angle,axis) {
     let rot;
-    if(this.type==2) {
-      rot = this.copy;
+    if (arguments.length==1) {
+      rot = this.xy;
     } else {
       if(axis=="x") rot = this.yz;
       if(axis=="y") rot = this.xz;
@@ -74,57 +77,57 @@ window.Vector = class {
     let a = rot.heading + angle;
     let m = rot.mag;
     rot.set(Math.cos(a)*m,Math.sin(a)*m);
-    if(this.type==2) {
-      this.set(rot);
+    if(arguments.length==1) {
+      this.xy = rot;
     } else {
-      if(axis=="x") this.set(this.x,rot.x,rot.y);
-      if(axis=="y") this.set(rot.x,this.y,rot.y);
-      if(axis=="z") this.set(rot.x,rot.y,this.z);
+      if(axis=="x") this.yz = rot;
+      if(axis=="y") this.xz = rot;
+      if(axis=="z") this.xy = rot;
     }
     return this;
   }
   
+  get magSq() {
+    return (this.x*this.x) + (this.y*this.y) + (this.z*this.z);
+  }
   get mag() {
-    return Math.sqrt((this.x*this.x) + (this.y*this.y) + (this.z*this.z));
+    return Math.sqrt(this.magSq);
   }
   get copy() {
-    if(this.type>2) return new Vector(this.x,this.y,this.z);
-    else return new Vector(this.x,this.y);
+    return new Vector(this.x,this.y,this.z);
   }
-  get heading() {
-    if(this.type>2) console.warn("Warning: heading is only for 2D vectors"); 
+  get heading() { 
     return Math.atan2(this.y,this.x);
   }
   get abs() {
-    if(this.type>2) return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
-    else return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+    return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
   }
   max(v) {
-    if(this.type>2) return new Vector(Math.max(this.x,v.x), Math.max(this.y,v.y), Math.max(this.z,v.z));
-    else return new Vector(Math.max(this.x,v.x), Math.max(this.y,v.y));
+    return new Vector(Math.max(this.x,v.x), Math.max(this.y,v.y), Math.max(this.z,v.z));
   }
   min(v) {
-    if(this.type>2) return new Vector(Math.min(this.x,v.x), Math.min(this.y,v.y), Math.min(this.z,v.z));
-    else return new Vector(Math.min(this.x,v.x), Math.min(this.y,v.y));
+    return new Vector(Math.min(this.x,v.x), Math.min(this.y,v.y), Math.min(this.z,v.z));
   }
   dot(v) {
     return this.x*v.x + this.y*v.y + this.z*v.z;
   }
-  ndot(v) {
-    if(this.type>2) console.warn("Warning: ndot is only for 2D vectors");
-    return this.x*v.x - this.y*v.y;
-  }
   get xy() {
-    if(this.type<3) console.error("Error: xy is only for 3D vectors");
-    else return new Vector(this.x,this.y);
+    return new Vector(this.x,this.y);
   }
   get xz() {
-    if(this.type<3) console.error("Error: xz is only for 3D vectors");
-    else return new Vector(this.x,this.z);
+    return new Vector(this.x,this.z);
   }
   get yz() {
-    if(this.type<3) console.error("Error: yz is only for 3D vectors");
-    else return new Vector(this.y,this.z);
+    return new Vector(this.y,this.z);
+  }
+  set xy(v) {
+    this.set(v.x,v.y,this.z);
+  }
+  set xz(v) {
+    this.set(v.x,this.y,v.z);
+  }
+  set yz(v) {
+    this.set(this.x,v.y,v.z);
   }
 
   set mag(n) {
@@ -132,7 +135,6 @@ window.Vector = class {
     return this;
   }
   set heading(n) {
-    if(this.type>2) console.warn("Warning: heading is only for 2D vectors");
     this.rotate(n-this.heading);
     return this;
   }
