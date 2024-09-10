@@ -1,4 +1,4 @@
-export class Vector {
+class Vector {
 	constructor(x, y, z) {
 		if (arguments.length > 1) {
 			if (arguments.length == 2) z = 0;
@@ -162,4 +162,48 @@ export class Vector {
 	static get zero() {
 		return new Vector(0, 0, 0);
 	}
+	"+="(v, y, z) {
+		return this.add(...arguments);
+	}
+	"-="(v, y, z) {
+		return this.sub(...arguments);
+	}
+	"/="(n) {
+		return this.div(...arguments);
+	}
+	"*="(n) {
+		return this.mult(...arguments);
+	}
+	"="(v, y, z) {
+		this.set(...arguments);
+	}
+	"+"(v) {
+		return Vector.add(this, v);
+	}
+	"-"(v) {
+		return Vector.sub(this, v);
+	}
+	"/"(n) {
+		return Vector.div(this, n);
+	}
+	"*"(n) {
+		return Vector.mult(this, n);
+	}
+	"=="(vector) {
+		return this.x == vector.x && this.y == vector.y && this.z == vector.z;
+	}
+	[Symbol.toPrimitive](hint) {
+		switch (hint) {
+			case "string":
+				return this.toString();
+			case "number":
+				return this.mag;
+			default:
+				return this.mag;
+		}
+	}
+	toString() {
+		return this.z == 0 ? `(${this.x}, ${this.y})` : `(${this.x}, ${this.y}, ${this.z})`;
+	}
 }
+if (window) window.Vector = Vector;
