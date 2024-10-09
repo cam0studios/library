@@ -1,4 +1,4 @@
-const intersections = {
+export const intersections = {
 	linePointCollision: function (l1, l2, p) {
 		let d1 = (l1)["-"](p);
 		let d2 = (l2)["-"](p);
@@ -17,4 +17,3 @@ const intersections = {
 		return (closest)["-"](c) < r;
 	}
 };
-if (window) window.intersections = intersections;

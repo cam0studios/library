@@ -1,4 +1,4 @@
-class Vector {
+export class Vector {
 	constructor(x, y, z) {
 		if (arguments.length > 1) {
 			if (arguments.length == 2) z = 0;
@@ -78,12 +78,26 @@ class Vector {
 		if (axis == "z") this.xy = rot;
 		return this;
 	}
+	normalize() {
+		this["/="](this.mag);
+		return this;
+	}
+	reflect(v) {
+		let sub = (v)["*"](this.dot(v));
+		this["-="](sub);
+		this["*="](-1);
+		this["+="](sub);
+		return this;
+	}
 
 	get magSq() {
 		return (this.x * this.x) + (this.y * this.y) + (this.z * this.z);
 	}
 	get mag() {
 		return Math.sqrt(this.magSq);
+	}
+	get normalized() {
+		return this.copy.normalize();
 	}
 	get copy() {
 		return new Vector(this.x, this.y, this.z);
@@ -102,6 +116,9 @@ class Vector {
 	}
 	dot(v) {
 		return this.x * v.x + this.y * v.y + this.z * v.z;
+	}
+	lerp(v, n) {
+		return (this)["+"](((v)["-"](this))["*"](n));
 	}
 	get xy() {
 		return new Vector(this.x, this.y);
@@ -159,6 +176,12 @@ class Vector {
 	static dot(v1, v2) {
 		return (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
 	}
+	static lerp(v1, v2, n) {
+		return v1.lerp(v2, n);
+	}
+	static normalize(v) {
+		return v.normalized;
+	}
 	static get zero() {
 		return new Vector(0, 0, 0);
 	}
@@ -189,6 +212,9 @@ class Vector {
 	"*"(n) {
 		return Vector.mult(this, n);
 	}
+	"%"(n) {
+		return new Vector(this.x % n, this.y % n, this.z % n);
+	}
 	"=="(vector) {
 		return this.x == vector.x && this.y == vector.y && this.z == vector.z;
 	}
@@ -197,13 +223,14 @@ class Vector {
 			case "string":
 				return this.toString();
 			case "number":
-				return this.mag;
 			default:
-				return this.mag;
+				return this.toNumber();
 		}
 	}
 	toString() {
 		return this.z == 0 ? `(${this.x}, ${this.y})` : `(${this.x}, ${this.y}, ${this.z})`;
 	}
+	toNumber() {
+		return this.mag;
+	}
 }
-if (window) window.Vector = Vector;
