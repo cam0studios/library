@@ -8,7 +8,6 @@
     "url": "git+https://github.com/cam0studios/library.git"
   },
   "main": "index.js",
-  "types": "./dist/index.d.ts",
   "bugs": {
     "url": "https://github.com/cam0studios/library/issues"
   },
