@@ -2,6 +2,7 @@
   "name": "@cam0studios/vector-library",
   "version": "1.0.0",
   "author": "cam0studios",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cam0studios/library.git"
