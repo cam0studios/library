@@ -3,22 +3,31 @@ export default class Vector {
 	x: number;
 	y: number;
 	z: number;
-	dims: 2 | 3;
+	w: number;
+	dims: 2 | 3 | 4;
 	/**
 	 * Create a new vector object
 	 * @example
 	 * let a = new Vector(1, 2);
 	 * @example
 	 * let a = new Vector(1, 2, 3);
+	 * @example
+	 * let a = new Vector(1, 2, 3, 4);
 	 */
 	constructor(x: number, y: number);
 	constructor(x: number, y: number, z: number);
-	constructor(x: number, y: number, z?: number) {
+	constructor(x: number, y: number, z: number, w: number);
+	constructor(x: number, y: number, z?: number, w?: number) {
 		this.x = x;
 		this.y = y;
 		if (typeof z === "number") {
 			this.z = z;
-			this.dims = 3;
+			if (typeof w === "number") {
+				this.w = w;
+				this.dims = 4;
+			} else {
+				this.dims = 3;
+			}
 		} else {
 			this.dims = 2;
 		}
@@ -37,18 +46,25 @@ export default class Vector {
 	add(v: Vector): Vector;
 	add(x: number, y: number): Vector;
 	add(x: number, y: number, z: number): Vector;
-	add(v: Vector | number, y?: number, z?: number): Vector {
+	add(x: number, y: number, z: number, w: number): Vector;
+	add(v: Vector | number, y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
 			this.x += v.x;
 			this.y += v.y;
-			if (this.dims === 3 && v.dims === 3) {
+			if (this.dims >= 3 && v.dims >= 3) {
+				if (this.dims === 4 && v.dims === 4) {
+					this.w += v.w;
+				}
 				this.z += v.z;
 			}
 		} else if (typeof y === "number") {
 			this.x += v;
 			this.y += y;
-			if (this.dims === 3 && typeof z === "number") {
+			if (this.dims >= 3 && typeof z === "number") {
 				this.z += z;
+				if (this.dims === 4 && typeof w === "number") {
+					this.w += w;
+				}
 			}
 		}
 		return this;
@@ -67,18 +83,25 @@ export default class Vector {
 	sub(v: Vector): Vector;
 	sub(x: number, y: number): Vector;
 	sub(x: number, y: number, z: number): Vector;
-	sub(v: Vector | number, y?: number, z?: number): Vector {
+	sub(x: number, y: number, z: number, w: number): Vector;
+	sub(v: Vector | number, y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
 			this.x -= v.x;
 			this.y -= v.y;
-			if (this.dims === 3 && v.dims === 3) {
+			if (this.dims >= 3 && v.dims >= 3) {
+				if (this.dims === 4 && v.dims === 4) {
+					this.w -= v.w;
+				}
 				this.z -= v.z;
 			}
 		} else if (typeof y === "number") {
 			this.x -= v;
 			this.y -= y;
-			if (this.dims === 3 && typeof z === "number") {
+			if (this.dims >= 3 && typeof z === "number") {
 				this.z -= z;
+				if (this.dims === 4 && typeof w === "number") {
+					this.w -= w;
+				}
 			}
 		}
 		return this;
@@ -100,14 +123,20 @@ export default class Vector {
 		if (v instanceof Vector) {
 			this.x *= v.x;
 			this.y *= v.y;
-			if (this.dims === 3 && v.dims === 3) {
+			if (this.dims >= 3 && v.dims >= 3) {
 				this.z *= v.z;
+				if (this.dims === 4 && v.dims === 4) {
+					this.w *= v.w;
+				}
 			}
 		} else {
 			this.x *= v;
 			this.y *= v;
-			if (this.dims === 3) {
+			if (this.dims >= 3) {
 				this.z *= v;
+				if (this.dims === 4) {
+					this.w *= v;
+				}
 			}
 		}
 		return this;
@@ -132,11 +161,17 @@ export default class Vector {
 			}
 			this.x /= v.x;
 			this.y /= v.y;
-			if (this.dims === 3 && v.dims === 3) {
+			if (this.dims >= 3 && v.dims >= 3) {
 				if (v.z === 0) {
 					throw new Error("Div parameter cannot be zero");
 				}
 				this.z /= v.z;
+				if (this.dims === 4 && v.dims === 4) {
+					if (v.w === 0) {
+						throw new Error("Div parameter cannot be zero");
+					}
+					this.w /= v.w;
+				}
 			}
 		} else {
 			if (v === 0) {
@@ -144,8 +179,11 @@ export default class Vector {
 			}
 			this.x /= v;
 			this.y /= v;
-			if (this.dims === 3) {
+			if (this.dims >= 3) {
 				this.z /= v;
+				if (this.dims === 4) {
+					this.w /= v;
+				}
 			}
 		}
 		return this;
@@ -168,25 +206,35 @@ export default class Vector {
 	set(arr: number[]): Vector;
 	set(x: number, y: number): Vector;
 	set(x: number, y: number, z: number): Vector;
-	set(v: Vector | number | number[], y?: number, z?: number): Vector {
+	set(x: number, y: number, z: number, w: number): Vector;
+	set(v: Vector | number | number[], y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
 			this.x = v.x;
 			this.y = v.y;
-			if (this.dims === 3 && v.dims === 3) {
+			if (this.dims >= 3 && v.dims >= 3) {
 				this.z = v.z;
+				if (this.dims === 4 && v.dims === 4) {
+					this.w = v.w;
+				}
 			}
 		} else if (Array.isArray(v)) {
 			if (v.length < 2) return this;
 			this.x = v[0];
 			this.y = v[1];
-			if (this.dims === 3 && 2 in v) {
+			if (this.dims >= 3 && 2 in v) {
 				this.z = v[2];
+				if (this.dims === 4 && 3 in v) {
+					this.w = v[3];
+				}
 			}
 		} else if (typeof y === "number") {
 			this.x = v;
 			this.y = y;
-			if (this.dims === 3 && typeof z === "number") {
+			if (this.dims >= 3 && typeof z === "number") {
 				this.z = z;
+				if (this.dims === 4 && typeof w === "number") {
+					this.w = w;
+				}
 			}
 		}
 		return this;
@@ -204,6 +252,9 @@ export default class Vector {
 	rotate(angle: number, axis: "x" | "y" | "z" = "z"): Vector {
 		if (this.dims < 3 && axis !== "z") {
 			throw new Error("Cannot rotate 2D vector around x or y axis");
+		}
+		if (this.dims === 4) {
+			throw new Error("Cannot rotate 4D vector");
 		}
 		let rot: Vector;
 		if (axis === "x") rot = this.yz;
@@ -256,10 +307,12 @@ export default class Vector {
 	 * let n = a.magSq;
 	 */
 	get magSq(): number {
-		if (this.dims < 3) {
-			return this.x * this.x + this.y * this.y;
-		} else {
+		if (this.dims === 4) {
+			return this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w;
+		} else if (this.dims === 3) {
 			return this.x * this.x + this.y * this.y + this.z * this.z;
+		} else {
+			return this.x * this.x + this.y * this.y;
 		}
 	}
 
@@ -290,15 +343,17 @@ export default class Vector {
 	 * let b = a.copy;
 	 */
 	get copy(): Vector {
-		if (this.dims < 3) {
-			return new Vector(this.x, this.y);
-		} else {
+		if (this.dims === 4) {
+			return new Vector(this.x, this.y, this.z, this.w);
+		} else if (this.dims === 3) {
 			return new Vector(this.x, this.y, this.z);
+		} else {
+			return new Vector(this.x, this.y);
 		}
 	}
 
 	/**
-	 * Get the heading of the vector (in radians)
+	 * Get the heading of this 2D vector (in radians)
 	 * @example
 	 * let a = new Vector(1, 2);
 	 * let n = a.heading;
@@ -314,10 +369,12 @@ export default class Vector {
 	 * let b = a.abs;
 	 */
 	get abs(): Vector {
-		if (this.dims < 3) {
-			return new Vector(Math.abs(this.x), Math.abs(this.y));
-		} else {
+		if (this.dims === 4) {
+			return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z), Math.abs(this.w));
+		} else if (this.dims === 3) {
 			return new Vector(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
+		} else {
+			return new Vector(Math.abs(this.x), Math.abs(this.y));
 		}
 	}
 
@@ -331,27 +388,44 @@ export default class Vector {
 	max(v: Vector): Vector;
 	max(x: number, y: number): Vector;
 	max(x: number, y: number, z: number): Vector;
-	max(v: Vector | number, y?: number, z?: number): Vector {
+	max(x: number, y: number, z: number, w: number): Vector;
+	max(v: Vector | number, y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
-			if (this.dims < 3 || v.dims < 3) {
+			if (this.dims === 4 && v.dims === 4) {
 				return new Vector(
 					Math.max(this.x, v.x),
-					Math.max(this.y, v.y)
+					Math.max(this.y, v.y),
+					Math.max(this.z, v.z),
+					Math.max(this.w, v.w)
 				);
-			} else {
+			} else if (this.dims >= 3 && v.dims >= 3) {
 				return new Vector(
 					Math.max(this.x, v.x),
 					Math.max(this.y, v.y),
 					Math.max(this.z, v.z)
-				)
+				);
+			} else {
+				return new Vector(
+					Math.max(this.x, v.x),
+					Math.max(this.y, v.y)
+				);
 			}
 		} else if (typeof y === "number") {
-			if (this.dims === 3 && typeof z === "number") {
-				return new Vector(
-					Math.max(this.x, v),
-					Math.max(this.y, y),
-					Math.max(this.z, z)
-				);
+			if (this.dims >= 3 && typeof z === "number") {
+				if (this.dims === 4 && typeof w === "number") {
+					return new Vector(
+						Math.max(this.x, v),
+						Math.max(this.y, y),
+						Math.max(this.z, z),
+						Math.max(this.w, w)
+					);
+				} else {
+					return new Vector(
+						Math.max(this.x, v),
+						Math.max(this.y, y),
+						Math.max(this.z, z)
+					);
+				}
 			} else {
 				return new Vector(
 					Math.max(this.x, v),
@@ -373,27 +447,44 @@ export default class Vector {
 	min(v: Vector): Vector;
 	min(x: number, y: number): Vector;
 	min(x: number, y: number, z: number): Vector;
-	min(v: Vector | number, y?: number, z?: number): Vector {
+	min(x: number, y: number, z: number, w: number): Vector;
+	min(v: Vector | number, y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
-			if (this.dims < 3 || v.dims < 3) {
+			if (this.dims === 4 && v.dims === 4) {
 				return new Vector(
 					Math.min(this.x, v.x),
-					Math.min(this.y, v.y)
+					Math.min(this.y, v.y),
+					Math.min(this.z, v.z),
+					Math.min(this.w, v.w)
 				);
-			} else {
+			} else if (this.dims >= 3 && v.dims >= 3) {
 				return new Vector(
 					Math.min(this.x, v.x),
 					Math.min(this.y, v.y),
 					Math.min(this.z, v.z)
-				)
+				);
+			} else {
+				return new Vector(
+					Math.min(this.x, v.x),
+					Math.min(this.y, v.y)
+				);
 			}
 		} else if (typeof y === "number") {
-			if (this.dims === 3 && typeof z === "number") {
-				return new Vector(
-					Math.min(this.x, v),
-					Math.min(this.y, y),
-					Math.min(this.z, z)
-				);
+			if (this.dims >= 3 && typeof z === "number") {
+				if (this.dims === 4 && typeof w === "number") {
+					return new Vector(
+						Math.min(this.x, v),
+						Math.min(this.y, y),
+						Math.min(this.z, z),
+						Math.min(this.w, w)
+					);
+				} else {
+					return new Vector(
+						Math.min(this.x, v),
+						Math.min(this.y, y),
+						Math.min(this.z, z)
+					);
+				}
 			} else {
 				return new Vector(
 					Math.min(this.x, v),
@@ -415,16 +506,23 @@ export default class Vector {
 	dot(v: Vector): number;
 	dot(x: number, y: number): number;
 	dot(x: number, y: number, z: number): number;
-	dot(v: Vector | number, y?: number, z?: number): number {
+	dot(x: number, y: number, z: number, w: number): number;
+	dot(v: Vector | number, y?: number, z?: number, w?: number): number {
 		if (v instanceof Vector) {
-			if (this.dims < 3 || v.dims < 3) {
-				return this.x * v.x + this.y * v.y;
-			} else {
+			if (this.dims === 4 && v.dims === 4) {
+				return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
+			} else if (this.dims >= 3 && v.dims >= 3) {
 				return this.x * v.x + this.y * v.y + this.z * v.z;
+			} else {
+				return this.x * v.x + this.y * v.y;
 			}
 		} else if (typeof y === "number") {
-			if (this.dims === 3 && typeof z === "number") {
-				return this.x * v + this.y * y + this.z * z;
+			if (this.dims >= 3 && typeof z === "number") {
+				if (this.dims === 4 && typeof w === "number") {
+					return this.x * v + this.y * y + this.z * z + this.w * w;
+				} else {
+					return this.x * v + this.y * y + this.z * z;
+				}
 			} else {
 				return this.x * v + this.y * y;
 			}
@@ -443,14 +541,17 @@ export default class Vector {
 	lerp(v: Vector, t: number): Vector;
 	lerp(x: number, y: number, t: number): Vector;
 	lerp(x: number, y: number, z: number, t: number): Vector;
-	lerp(v: Vector | number, y: number, z?: number, t?: number): Vector {
+	lerp(x: number, y: number, z: number, w: number, t: number): Vector;
+	lerp(v: Vector | number, y: number, z?: number, w?: number, t?: number): Vector {
 		if (v instanceof Vector) {
 			this["+="]((v)["-"](this)["*"](y));
 		} else if (typeof z === "number") {
-			if (this.dims < 3 || typeof t !== "number") {
+			if (this.dims === 2 || typeof w !== "number") {
 				this["+="](new Vector(v, y)["-"](this)["*"](z));
+			} else if (this.dims === 3 || typeof t !== "number") {
+				this["+="](new Vector(v, y, z)["-"](this)["*"](w));
 			} else {
-				this["+="](new Vector(v, y, z)["-"](this)["*"](t));
+				this["+="](new Vector(v, y, z, w)["-"](this)["*"](t));
 			}
 		}
 		return this;
@@ -474,7 +575,14 @@ export default class Vector {
 			if (v === 0) {
 				throw new Error("Div parameter cannot be zero");
 			}
-			if (this.dims === 3) {
+			if (this.dims === 4) {
+				return new Vector(
+					this.x % v,
+					this.y % v,
+					this.z % v,
+					this.w % v
+				);
+			} else if (this.dims === 3) {
 				return new Vector(
 					this.x % v,
 					this.y % v,
@@ -490,15 +598,24 @@ export default class Vector {
 			if (v.x === 0 || v.y === 0) {
 				throw new Error("Div parameter cannot be zero");
 			}
-			if (v.dims === 3) {
+			if (this.dims >= 3 && v.dims >= 3) {
 				if (v.z === 0) {
 					throw new Error("Div parameter cannot be zero");
 				}
-				return new Vector(
-					this.x % v.x,
-					this.y % v.y,
-					this.z % v.z
-				);
+				if (this.dims === 4 && v.dims === 4) {
+					return new Vector(
+						this.x % v.x,
+						this.y % v.y,
+						this.z % v.z,
+						this.w % v.w
+					);
+				} else {
+					return new Vector(
+						this.x % v.x,
+						this.y % v.y,
+						this.z % v.z
+					);
+				}
 			} else {
 				return new Vector(
 					this.x % v.x,
@@ -516,8 +633,11 @@ export default class Vector {
 	 */
 	apply(func: (comp: number) => number): Vector {
 		let comps = [this.x, this.y];
-		if (this.dims === 3) {
+		if (this.dims >= 3) {
 			comps.push(this.z);
+		}
+		if (this.dims === 4) {
+			comps.push(this.w);
 		}
 		return this.set(comps.map(func));
 	}
@@ -811,11 +931,13 @@ export default class Vector {
 	/**
 	 * Gets the vector (0, 0) or (0, 0, 0)
 	 */
-	static zero(dims: 2 | 3 = 3): Vector {
+	static zero(dims: 2 | 3 | 4 = 3): Vector {
 		if (dims === 2) {
 			return new Vector(0, 0);
 		} else if (dims === 3) {
 			return new Vector(0, 0, 0);
+		} else if (dims === 4) {
+			return new Vector(0, 0, 0, 0);
 		} else {
 			throw new Error("Invalid dimensions for zero vector");
 		}
@@ -832,6 +954,12 @@ export default class Vector {
 	static get zero3D(): Vector {
 		return Vector.zero(3);
 	}
+	/**
+	 * Gets the vector (0, 0, 0, 0)
+	 */
+	static get zero4D(): Vector {
+		return new Vector(0, 0, 0, 0);
+	}
 
 	/**
 	 * Adds a vector to this vector
@@ -845,12 +973,18 @@ export default class Vector {
 	 */
 	"+="(x: number, y: number): Vector;
 	"+="(x: number, y: number, z: number): Vector;
+	"+="(x: number, y: number, z: number, w: number): Vector;
 	"+="(v: Vector): Vector;
-	"+="(v: Vector|number, y?: number, z?: number): Vector {
+	"+="(v: Vector|number, y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
 			this.add(v);
 		} else if (typeof y === "number") {
 			if (typeof z === "number") {
+				if (typeof w === "number") {
+					this.add(v, y, z, w);
+				} else {
+					this.add(v, y, z);
+				}
 				this.add(v, y, z);
 			} else {
 				this.add(v, y);
@@ -871,13 +1005,18 @@ export default class Vector {
 	 */
 	"-="(x: number, y: number): Vector;
 	"-="(x: number, y: number, z: number): Vector;
+	"-="(x: number, y: number, z: number, w: number): Vector;
 	"-="(v: Vector): Vector;
-	"-="(v: Vector | number, y?: number, z?: number): Vector {
+	"-="(v: Vector | number, y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
 			this.sub(v);
 		} else if (typeof y === "number") {
 			if (typeof z === "number") {
-				this.sub(v, y, z);
+				if (typeof w === "number") {
+					this.sub(v, y, z, w);
+				} else {
+					this.sub(v, y, z);
+				}
 			} else {
 				this.sub(v, y);
 			}
@@ -939,16 +1078,21 @@ export default class Vector {
 	 */
 	"="(x: number, y: number): Vector;
 	"="(x: number, y: number, z: number): Vector;
+	"="(x: number, y: number, z: number, w: number): Vector;
 	"="(v: Vector): Vector;
 	"="(arr: number[]): Vector;
-	"="(v: Vector | number | number[], y?: number, z?: number): Vector {
+	"="(v: Vector | number | number[], y?: number, z?: number, w?: number): Vector {
 		if (v instanceof Vector) {
 			this.set(v);
 		} else if (Array.isArray(v)) {
 			this.set(v);
 		} else if (typeof y === "number") {
 			if (typeof z === "number") {
-				this.set(v, y, z);
+				if (typeof w === "number") {
+					this.set(v, y, z, w);
+				} else {
+					this.set(v, y, z);
+				}
 			} else {
 				this.set(v, y);
 			}
@@ -1049,27 +1193,28 @@ export default class Vector {
 	 * let eq = (a)["=="](b);
 	 */
 	"=="(vector: Vector): boolean {
-		if (this.dims < 3 || vector.dims < 3) {
-			return this.x == vector.x && this.y == vector.y;
-		} else {
+		if (this.dims === 4 && vector.dims === 4) {
+			return this.x == vector.x && this.y == vector.y && this.z == vector.z && this.w == vector.w;
+		} else if (this.dims === 3 && vector.dims === 3) {
 			return this.x == vector.x && this.y == vector.y && this.z == vector.z;
+		} else {
+			return this.x == vector.x && this.y == vector.y;
 		}
 	}
 	[Symbol.toPrimitive](hint: string): number | string {
 		switch (hint) {
-			case "string":
-				return this.toString();
 			case "number":
-			default:
 				return this.toNumber();
+			case "string":
+			default:
+				return this.toString();
 		}
 	}
-	[Symbol.iterator](): Iterator<number> {
-		if (this.dims < 3) {
-			return [this.x, this.y][Symbol.iterator]();
-		} else {
-			return [this.x, this.y, this.z][Symbol.iterator]();
-		}
+	*[Symbol.iterator](): Iterator<number> {
+		yield this.x;
+		yield this.y;
+		if (this.dims >= 3) yield this.z;
+		if (this.dims === 4) yield this.w;
 	}
 
 	/**
@@ -1082,10 +1227,12 @@ export default class Vector {
 	 * let str = a.toString();
 	 */
 	toString(): string {
-		if (this.dims < 3) {
-			return `(${this.x}, ${this.y})`;
-		} else {
+		if (this.dims === 4) {
+			return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`;
+		} else if (this.dims === 3) {
 			return `(${this.x}, ${this.y}, ${this.z})`;
+		} else {
+			return `(${this.x}, ${this.y})`;
 		}
 	}
 
