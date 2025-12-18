@@ -380,6 +380,17 @@ test("dot", () => {
 	expect(Vector.dot(a, b)).toBe(70);
 });
 
+test("cross", () => {
+    let a = new Vector(1, 2);
+    let b = new Vector(3, 4);
+    expect(a.cross(b)).toEqual(new Vector(0, 0, -2));
+    expect(Vector.cross(a, b)).toEqual(new Vector(0, 0, -2));
+	a = new Vector(1, 2, -3);
+	b = new Vector(5, -6, 7);
+	expect(a.cross(b)).toEqual(new Vector(-4, -22, -16));
+	expect(Vector.cross(a, b)).toEqual(new Vector(-4, -22, -16));
+});
+
 test("lerp", () => {
     let a = new Vector(1, 2);
     let b = new Vector(3, 4);

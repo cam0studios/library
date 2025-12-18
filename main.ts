@@ -530,6 +530,42 @@ export default class Vector {
 			return 0;
 		}
 	}
+	
+	/**
+	 * Get the cross product between this vector and another vector
+	 * @example
+	 * let a = new Vector(1, 2, 3);
+	 * let b = new Vector(3, -1, 0);
+	 * let n = a.cross(b);
+	 */
+	cross(v: Vector): Vector;
+	cross(x: number, y: number): Vector;
+	cross(x: number, y: number, z: number): Vector;
+	cross(x: number, y: number, z: number, w: number): Vector;
+	cross(v: Vector | number, y?: number, z?: number, w?: number): Vector {
+		if (v instanceof Vector) {
+			if (this.dims >= 3 && v.dims >= 3) {
+				return new Vector(
+					this.y * v.z - this.z * v.y,
+					this.z * v.x - this.x * v.z,
+					this.x * v.y - this.y * v.x
+				);
+			} else if (this.dims === 2 && v.dims === 2) {
+				return new Vector(0, 0, this.x * v.y - this.y * v.x);
+			}
+		} else if (typeof y === "number") {
+			if (this.dims >= 3 && typeof z === "number") {
+				return new Vector(
+					this.y * z - this.z * y,
+					this.z * v - this.x * z,
+					this.x * y - this.y * v
+				);
+			} else {
+				return new Vector(this.x * v, this.y * y);
+			}
+		}
+		return Vector.zero(this.dims);
+	}
 
 	/**
 	 * Linearly interpolate between this vector and another vector
@@ -901,6 +937,17 @@ export default class Vector {
 	 */
 	static dot(v1: Vector, v2: Vector): number {
 		return v1.dot(v2);
+	}
+
+	/**
+	 * Gets the cross product of two vectors
+	 * @example
+	 * let a = new Vector(1, 2, -1);
+	 * let b = new Vector(3, 4, 0);
+	 * let n = Vector.cross(a, b);
+	 */
+	static cross(v1: Vector, v2: Vector): Vector {
+		return v1.cross(v2);
 	}
 
 	/**
